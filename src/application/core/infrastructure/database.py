@@ -24,6 +24,6 @@ session_factory = async_sessionmaker(
 
 
 @asynccontextmanager
-async def create_session() -> AsyncGenerator[AsyncSession]:
+async def create_session() -> AsyncGenerator[AsyncSession, None]:
     async with session_factory.begin() as session:
         yield session
