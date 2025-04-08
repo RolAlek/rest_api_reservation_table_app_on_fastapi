@@ -1,0 +1,32 @@
+[project]
+name = "rest-api-reservation-table-app-on-fastapi"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Aleksandr Rol",email = "rolaleksandr75@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi (>=0.115.12,<0.116.0)",
+    "pydantic-settings (>=2.8.1,<3.0.0)",
+    "alembic (>=1.15.2,<2.0.0)",
+    "sqlalchemy[syncio] (>=2.0.40,<3.0.0)",
+    "asyncpg (>=0.30.0,<0.31.0)",
+    "aioinject (>=0.38.0,<0.39.0)",
+    "uvicorn (>=0.34.0,<0.35.0)"
+]
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.group.dev.dependencies]
+isort = "^6.0.1"
+mypy = "^1.15.0"
+ruff = "^0.11.4"
+pyclean = "^3.1.0"
+pytest = "^8.3.5"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

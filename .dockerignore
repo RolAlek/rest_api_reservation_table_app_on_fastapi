@@ -1,0 +1,9 @@
+.ruff_cache/
+.venv/
+.env
+.vscode/
+.env.example
+.gitignore
+.git
+README.md
+Taskfile.yml
