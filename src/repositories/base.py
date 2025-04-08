@@ -5,8 +5,8 @@ from typing import Generic, Sequence, TypeVar
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from domain.base import AbstractDTO
 from domain.models.base import Base
+from repositories.values import AbstractDTO
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateData = TypeVar("CreateData", bound=AbstractDTO)
@@ -37,7 +37,7 @@ class BaseSQLAlchemyRepository(
     AbstractRepository,
 ):
     session: AsyncSession
-    model: ModelType
+    model = None
 
     async def add(self, data: CreateData) -> ModelType:
         instance = self.model(**asdict(data))
