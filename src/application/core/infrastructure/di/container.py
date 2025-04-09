@@ -8,10 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.core.config import APISettings, DatabaseSettings
 from application.core.infrastructure.database import create_session
+from application.core.infrastructure.di.modules.table import \
+    PROVIDERS as TABLE_PROVIDERS
 
 SETTINGS = [DatabaseSettings, APISettings]
 
-MODULES = []
+MODULES = [TABLE_PROVIDERS]
 
 
 def _init_settings(
@@ -28,7 +30,7 @@ def init_container() -> Container:
     container.register(Scoped(create_session, type_=AsyncSession))
 
     for provider in itertools.chain.from_iterable(MODULES):
-        container.register(Scoped(provider))
+        container.register(provider)
 
     _init_settings(container, settings_classes=SETTINGS)
 

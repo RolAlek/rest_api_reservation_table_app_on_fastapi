@@ -5,7 +5,7 @@ from repositories.modules.table.dto import CreateTableDTO
 from repositories.modules.table.table import _TableRepository
 from services.modules.table.exceptions import TableNotFoundException
 from services.modules.table.service import TableService
-from tests.fixtures import create_table, table_repository, table_service  # noqa
+from tests.fixtures import create_table  # noqa
 
 
 @pytest.mark.asyncio

@@ -4,6 +4,7 @@ from typing import Any, AsyncGenerator
 from aioinject.ext.fastapi import AioInjectMiddleware
 from fastapi import FastAPI
 
+from application.api.router import main_router
 from application.core import get_logger, settings
 from application.core.infrastructure.di.container import init_container
 
@@ -26,6 +27,8 @@ def create_app() -> FastAPI:
         redoc_url="/api/redoc",
         debug=settings.api.debug,
     )
+
+    app.include_router(main_router)
 
     app.add_middleware(AioInjectMiddleware, container=init_container())
 
