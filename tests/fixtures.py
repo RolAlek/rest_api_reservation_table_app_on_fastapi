@@ -4,11 +4,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from repositories.modules.table.dto import CreateTableDTO
 from repositories.modules.table.table import _TableRepository
+from services.modules.table.service import TableService
 
 
 @pytest_asyncio.fixture
 async def table_repository(get_session: AsyncSession) -> _TableRepository:
     return _TableRepository(session=get_session)
+
+
+@pytest_asyncio.fixture
+async def table_service(table_repository: _TableRepository) -> TableService:
+    return TableService(table_repository)
 
 
 @pytest_asyncio.fixture
