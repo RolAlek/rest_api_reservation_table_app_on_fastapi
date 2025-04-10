@@ -17,12 +17,17 @@ from sqlalchemy.ext.asyncio import (
 from application.app import create_app
 from application.core.infrastructure.di.container import init_container
 from domain.models import Base
-from repositories.modules.table.table import _TableRepository
+from repositories.modules.reservation.repository import _ReservationRepository
+from repositories.modules.table.repository import _TableRepository
 from services.modules.table.service import TableService
 
 TEST_DB_URL = "sqlite+aiosqlite:///:memory:"
 
-engine: AsyncEngine = create_async_engine(TEST_DB_URL, echo=True)
+engine: AsyncEngine = create_async_engine(
+    TEST_DB_URL,
+    echo=True,
+    connect_args={"check_same_thread": False},
+)
 session_factory = async_sessionmaker(
     bind=engine,
     expire_on_commit=False,
@@ -64,6 +69,11 @@ async def table_repository(get_session: AsyncSession) -> _TableRepository:
 @pytest_asyncio.fixture
 async def table_service(table_repository: _TableRepository) -> TableService:
     return TableService(table_repository)
+
+
+@pytest_asyncio.fixture
+async def reservation_repository(get_session: AsyncSession) -> _ReservationRepository:
+    return _ReservationRepository(session=get_session)
 
 
 @pytest.fixture

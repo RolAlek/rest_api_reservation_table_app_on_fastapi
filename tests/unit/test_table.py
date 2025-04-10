@@ -2,7 +2,7 @@ import pytest
 from faker import Faker
 
 from repositories.modules.table.dto import CreateTableDTO
-from repositories.modules.table.table import _TableRepository
+from repositories.modules.table.repository import _TableRepository
 from services.modules.table.exceptions import TableNotFoundException
 from services.modules.table.service import TableService
 from tests.fixtures import create_table  # noqa
