@@ -5,6 +5,8 @@ from fastapi.testclient import TestClient
 
 from tests.fixtures import create_table  # noqa isort:skip
 
+INVALID_DATA = ["0", 0, -1, 0.5, "", " ", None, "null"]
+
 
 @pytest.mark.usefixtures("create_table")
 def test_get_all_tables_endpoint(client: TestClient, app: FastAPI):
@@ -16,7 +18,11 @@ def test_get_all_tables_endpoint(client: TestClient, app: FastAPI):
     assert len(response.json()) == 2, "Response shouldn't be empty"
 
 
-def test_create_new_table_succes(client: TestClient, app: FastAPI, faker: Faker):
+def test_create_new_table_success(
+    client: TestClient,
+    app: FastAPI,
+    faker: Faker,
+):
     url_post = app.url_path_for("create_new_table")
     url_get = app.url_path_for("get_all_tables")
 
@@ -27,13 +33,15 @@ def test_create_new_table_succes(client: TestClient, app: FastAPI, faker: Faker)
     )
     assert len(empty_get_response.json()) == 0, "Response shouldn't be empty"
 
+    data = {
+        "name": faker.text(),
+        "seats": faker.random_int(min=1),
+        "location": faker.text(),
+    }
+
     response: Response = client.post(
         url_post,
-        json={
-            "name": faker.word(),
-            "seats": faker.random_int(),
-            "location": faker.word(),
-        },
+        json=data,
     )
 
     assert response.status_code == status.HTTP_201_CREATED, "Status code should be 201"
@@ -51,9 +59,70 @@ def test_create_new_table_succes(client: TestClient, app: FastAPI, faker: Faker)
     assert len(get_response_after_post.json()) == 1, "Response shouldn't be empty"
 
 
-def test_create_new_table_failed(client: TestClient, app: FastAPI):
-    # TODO: Implement this test after change validation in api
-    pass
+@pytest.mark.parametrize("invalid_name", INVALID_DATA + [5])
+def test_post_create_table_failed_with_invalid_name(
+    client: TestClient,
+    app: FastAPI,
+    faker: Faker,
+    invalid_name,
+):
+    url = app.url_path_for("create_new_table")
+
+    data = {
+        "name": invalid_name,
+        "seats": faker.random_int(),
+        "location": faker.word(),
+    }
+
+    response = client.post(
+        url,
+        json=data,
+    )
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, (
+        f"POST request from {url} with name == {invalid_name} should return 422 status."
+    )
+
+
+@pytest.mark.parametrize("invalid_seats", INVALID_DATA)
+def test_post_create_table_failed_with_invalid_seats(
+    client: TestClient,
+    app: FastAPI,
+    faker: Faker,
+    invalid_seats,
+):
+    url = app.url_path_for("create_new_table")
+    response = client.post(
+        url,
+        json={
+            "name": faker.word(),
+            "seats": invalid_seats,
+            "location": faker.word(),
+        },
+    )
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, (
+        f"POST request from {url} with seats == {invalid_seats} should return 422 status."
+    )
+
+
+@pytest.mark.parametrize("invalid_location", INVALID_DATA + [5])
+def test_post_create_table_failed_with_invalid_location(
+    app: FastAPI, client: TestClient, faker: Faker, invalid_location
+):
+    url = app.url_path_for("create_new_table")
+
+    data = {
+        "name": faker.word(),
+        "seats": faker.random_int(min=1),
+        "location": invalid_location,
+    }
+
+    response = client.post(url, json=data)
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY, (
+        f"POST request from {url} with seats == {invalid_location} should return 422 status."
+    )
 
 
 @pytest.mark.usefixtures("create_table")

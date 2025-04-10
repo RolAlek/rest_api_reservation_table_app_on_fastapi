@@ -3,9 +3,7 @@ from aioinject.ext.fastapi import inject
 from fastapi import APIRouter, HTTPException, status
 
 from application.api.v1.handlers.table.schemas import (
-    TableCreateRequestSchema,
-    TableResponseSchema,
-)
+    TableCreateRequestSchema, TableResponseSchema)
 from repositories.modules.table.dto import CreateTableDTO
 from services.exceptions import ServiceException
 from services.modules.table.service import TableService
@@ -26,12 +24,9 @@ async def get_all_tables(service: Injected["TableService"]):
 )
 @inject
 async def create_new_table(
-    schema: TableCreateRequestSchema, service: Injected["TableService"]
+    schema: TableCreateRequestSchema,
+    service: Injected["TableService"],
 ):
-    # TODO: check name is not empty string -> raise 400;
-    # TODO: check location is not empty string -> raise 400;
-    # TODO: check seats on > 0 -> raise 400;
-
     new_table = await service.create(
         CreateTableDTO(**schema.model_dump(exclude_unset=True))
     )
